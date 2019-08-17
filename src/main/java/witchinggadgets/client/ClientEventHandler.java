@@ -87,7 +87,7 @@ public class ClientEventHandler
 					event.toolTip.add(StatCollector.translateToLocal("wg.desc.infusionStabilizer"));
 
 		if(event.entityPlayer!=null)
-			if(ThaumcraftApiHelper.isResearchComplete(event.entityPlayer.getCommandSenderName(), "GEMCUTTING") && InfusedGemHandler.isGem(event.itemStack) && GuiScreen.isShiftKeyDown())
+			if(InfusedGemHandler.isGem(event.itemStack) && GuiScreen.isShiftKeyDown() && ThaumcraftApiHelper.isResearchComplete(event.entityPlayer.getCommandSenderName(), "GEMCUTTING"))
 			{
 				if(InfusedGemHandler.getNaturalAffinities(event.itemStack)!=null && InfusedGemHandler.getNaturalAffinities(event.itemStack).length>0)
 				{
