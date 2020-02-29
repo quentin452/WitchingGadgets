@@ -3,6 +3,7 @@ package witchinggadgets.common.blocks.tiles;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -12,10 +13,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
-import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.IAspectSource;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.api.visnet.VisNetHandler;
+import thaumcraft.common.lib.network.PacketHandler;
+import thaumcraft.common.lib.network.fx.PacketFXEssentiaSource;
 import thaumcraft.common.lib.utils.InventoryUtils;
 import thaumcraft.common.tiles.TileBellows;
 import witchinggadgets.WitchingGadgets;
@@ -30,6 +33,8 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 	int speedupTick = 0;
 	int processTick = 0;
 	int recipeTime = 0;
+	int fuel = 0;
+	int tick = 0;
 	boolean specialFuel;
 	public ForgeDirection facing = ForgeDirection.UNKNOWN;
 	public boolean active = false;
@@ -41,12 +46,12 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 		if((position!=1&&position!=3&&position!=4&&position!=5&&position!=7 &&position!=10&&position!=12&&position!=14&&position!=16) || this.worldObj.isRemote)
 			return;
 
-		if(worldObj.getWorldTime()%5==0 && position==1||position==3||position==5||position==7 && masterPos!=null && worldObj.getTileEntity(masterPos[0],masterPos[1],masterPos[2]) instanceof TileEntityBlastfurnace)
+		/*if(worldObj.getWorldTime()%5==0 && position==1||position==3||position==5||position==7 && masterPos!=null && worldObj.getTileEntity(masterPos[0],masterPos[1],masterPos[2]) instanceof TileEntityBlastfurnace)
 		{
 			TileEntityBlastfurnace master = (TileEntityBlastfurnace) worldObj.getTileEntity(masterPos[0],masterPos[1],masterPos[2]);
 			if(drawEssentia())
 				master.speedupTick += 600;
-		}
+		}*/
 
 		if(position==10||position==12||position==14||position==16)
 		{
@@ -57,12 +62,25 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 
 		if(position!=4)
 			return;
-
+		
+		if (tick <= 80)
+			++tick;
+		else
+			tick = 0;
+		
+		if(fuel < 256)
+		storeFuel();
+		
 		boolean cooking = false;
-		if(processTick>0)
+		
+		if(processTick>0 && fuel>0)
 		{
 			processTick--;
 			cooking = true;
+			
+			if (fuel>0 && tick == 0)
+				--fuel;
+			
 			if(speedupTick>0)
 				speedupTick--;
 
@@ -71,7 +89,7 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 				processTick = calc;
 		}
 
-		if(processTick<=0 && !inputs.isEmpty())
+		if(processTick<=0 && !inputs.isEmpty() && fuel>0)
 			if(cooking)
 			{
 				ItemStack inputStack = inputs.get(0);
@@ -117,6 +135,7 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 					inputs.remove(0);
 				cooking = true;
 			}
+		
 		if(cooking!=this.active)
 		{
 			this.active = cooking;
@@ -126,11 +145,33 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 
 	}
 
-	int calculateTime()
-	{
-		return (this.recipeTime/(this.speedupTick>0?2:1)) - (getBellows()*40);
+	 void storeFuel()
+	  {
+	      for (int x = this.xCoord - 5; x < this.xCoord + 5; x++) {
+	        for (int y = this.yCoord - 5; y < this.yCoord + 5; y++) {
+	          for (int z = this.zCoord - 5; z < this.zCoord + 5; z++)
+	          {
+	            TileEntity tile = this.worldObj.getTileEntity(x, y, z);
+	            if ((tile != null) && ((tile instanceof IAspectSource)))
+	            {
+	              IAspectSource as = (IAspectSource)tile;
+	              if ((as.doesContainerContainAmount(Aspect.FIRE, 1)) && 
+	                (as.takeFromContainer(Aspect.FIRE, 1)))
+	              {
+	                PacketHandler.INSTANCE.sendToAllAround(new PacketFXEssentiaSource(this.xCoord, this.yCoord, this.zCoord, (byte)(this.xCoord - x), (byte)(this.yCoord - y), (byte)(this.zCoord - z), Aspect.FIRE.getColor()), new NetworkRegistry.TargetPoint(getWorldObj().provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, 32.0D));
+	                this.fuel+=1;
+	              }
+	            }
+	          }
+	        }
+	    }
 	}
-	boolean drawEssentia()
+
+	int calculateTime() {
+		return Math.max(1, recipeTime / (speedupTick > 0 ? 2 : 1) - getBellows() * 40);
+	}
+	
+	/*boolean drawEssentia()
 	{
 		TileEntity tile = ThaumcraftApiHelper.getConnectableTile(worldObj, xCoord,yCoord,zCoord, this.facing);
 		if(tile!=null)
@@ -143,7 +184,8 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 				return true;
 		}
 		return false;
-	}
+	}*/
+
 	void outputItem(ItemStack item)
 	{
 		TileEntity inventory = this.worldObj.getTileEntity(this.xCoord+facing.offsetX*2, this.yCoord+1, this.zCoord+facing.offsetZ*2);
@@ -160,6 +202,7 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 		}
 		worldObj.addBlockEvent(xCoord,yCoord,zCoord, getBlockType(), 3,0);
 	}
+
 	int getBellows()
 	{
 		int bellows = 0;
@@ -179,6 +222,7 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 	public void readCustomNBT(NBTTagCompound tags)
 	{
 		position = tags.getByte("position");
+		fuel= tags.getInteger("fuel");
 		speedupTick = tags.getInteger("speedupTick");
 		processTick = tags.getInteger("processTick");
 		recipeTime = tags.getInteger("recipeTime");
@@ -186,22 +230,25 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 		facing = ForgeDirection.getOrientation(tags.getInteger("facing"));
 		active = tags.getBoolean("active");
 		specialFuel = tags.getBoolean("specialFuel");
+		tick = tags.getInteger("tick");
 
 		NBTTagList invList = tags.getTagList("inputs", 10);
 		inputs.clear();
 		for(int i=0;i<invList.tagCount();i++)
 			inputs.add( ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i)));
-
 	}
+
 	@Override
 	public void writeCustomNBT(NBTTagCompound tags)
 	{
 		tags.setByte("position", position);
+		tags.setInteger("fuel",fuel);
 		tags.setInteger("speedupTick", speedupTick);
 		tags.setInteger("processTick", processTick);
 		tags.setInteger("recipeTime", recipeTime);
 		tags.setIntArray("masterPos", masterPos);
 		tags.setInteger("facing", facing.ordinal());
+		tags.setInteger("tick", tick);
 		tags.setBoolean("active", active);
 		tags.setBoolean("specialFuel", specialFuel);
 
@@ -226,13 +273,16 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 	@Override
 	public boolean isConnectable(ForgeDirection fd)
 	{
-		return (position==1&&fd==ForgeDirection.NORTH)||(position==3&&fd==ForgeDirection.WEST)||(position==5&&fd==ForgeDirection.EAST)||(position==7&&fd==ForgeDirection.SOUTH);
+		//return (position==1&&fd==ForgeDirection.NORTH)||(position==3&&fd==ForgeDirection.WEST)||(position==5&&fd==ForgeDirection.EAST)||(position==7&&fd==ForgeDirection.SOUTH);
+		return false;
 	}
+
 	@Override
 	public boolean canInputFrom(ForgeDirection fd)
 	{
 		return position==1||position==3||position==4||position==5||position==7;
 	}
+
 	@Override
 	public int getSuctionAmount(ForgeDirection fd)
 	{
@@ -240,32 +290,38 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 			return 128;
 		return 0;
 	}
+
 	@Override
 	public Aspect getSuctionType(ForgeDirection fd)
 	{
 		return Aspect.FIRE;
 	}
+
 	@Override
 	public int getMinimumSuction()
 	{
 		return 0;
 	}
 
-
 	@Override
 	public boolean canOutputTo(ForgeDirection fd)
 	{
 		return false;
 	}
+
 	@Override
 	public int getEssentiaAmount(ForgeDirection fd)
 	{
+		TileEntity te = worldObj.getTileEntity(masterPos[0],masterPos[1],masterPos[2]);
+		if (te != null && te instanceof TileEntityBlastfurnace)
+			return ((TileEntityBlastfurnace)worldObj.getTileEntity(masterPos[0],masterPos[1],masterPos[2])).fuel;
 		return 0;
 	}
+
 	@Override
 	public Aspect getEssentiaType(ForgeDirection fd)
 	{
-		return null;
+		return Aspect.FIRE;
 	}
 
 	@Override
@@ -275,18 +331,21 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 	}
 
 	@Override
-	public void setSuction(Aspect aspect, int amount){}
+	public void setSuction(Aspect aspect, int amount){
+
+	}
+
 	@Override
 	public int addEssentia(Aspect arg0, int arg1, ForgeDirection arg2)
 	{
 		return 0;
 	}
+
 	@Override
-	public int takeEssentia(Aspect aspect, int amount, ForgeDirection fd) 
+	public int takeEssentia(Aspect aspect, int amount, ForgeDirection fd)
 	{
 		return 0;
 	}
-
 
 	@Override
 	public boolean receiveClientEvent(int eventNum, int arg)
@@ -354,6 +413,7 @@ public class TileEntityBlastfurnace extends TileEntityWGBase implements IEssenti
 	public static IIcon[] icon_bottomTBLR;
 	public static IIcon icon_internal;
 	public static IIcon icon_lava;
+
 	public IIcon getTexture(int side)
 	{
 
