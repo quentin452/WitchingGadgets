@@ -155,7 +155,7 @@ public class TileEntitySaunaStove extends TileEntityWGBase implements IFluidHand
 			{
 				for(int zz=outlineMinZ; zz<=outlineMaxZ; zz++)
 				{	
-					for(int xx=outlineMinX; xx<=outlineMaxZ; xx++)
+					for(int xx=outlineMinX; xx<=outlineMaxX; xx++)
 						if( closedList.contains(new ChunkCoordinates(xx,yy,zz)) && !aabbUsedBlocks.contains(new ChunkCoordinates(xx,yy,zz)))
 						{
 							start = Vec3.createVectorHelper(xx,yy,zz);
