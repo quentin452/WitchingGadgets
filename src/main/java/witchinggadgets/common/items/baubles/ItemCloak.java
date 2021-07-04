@@ -259,7 +259,7 @@ public class ItemCloak extends Item implements ITravellersGear, IActiveAbility, 
 						stack.getTagCompound().setBoolean("isSpectral",false);
 			if(subNames[stack.getItemDamage()].equals("raven"))
 			{
-				if(!player.onGround)
+				if(!player.onGround && !player.isOnLadder())
 				{
 					if(player.capabilities.isFlying || Hover.getHover(player.getEntityId()))
 					{
