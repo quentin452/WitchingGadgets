@@ -117,8 +117,9 @@ public class ItemCrystalCapsule extends Item implements IFluidContainerItem
 			if(space<1000)
 				return false;
 			handler.fill(dir, fs, true);
-			if(!player.inventory.addItemStackToInventory(getContainerItem(stack)))
-				player.dropPlayerItemWithRandomChoice(stack, false);
+			ItemStack containerStack = getContainerItem(stack);
+			if(!player.inventory.addItemStackToInventory(containerStack))
+				player.dropPlayerItemWithRandomChoice(containerStack, false);
 			stack.stackSize-=1;
 			return true;
 		}
