@@ -210,11 +210,11 @@ wg.potionCinderCoat=Cinder Coat
 
 # -- Research --
 # Formatting:
-# §l 	Bold
-# §m 	Strikethrough
-# §n 	Underline
-# §o 	Italic
-# §r 	Reset
+# ï¿½l 	Bold
+# ï¿½m 	Strikethrough
+# ï¿½n 	Underline
+# ï¿½o 	Italic
+# ï¿½r 	Reset
 # <BR>  LineBreak
 # <LINE>Fancy LineBreak
 #
@@ -578,6 +578,12 @@ witchinggadgets_research_page.TERRAFORMFOCUS_TAINT.1=That's it. You pretty much 
 witchinggadgets_research_name.TERRAFORMFOCUS_END=Terrestrial Focus: End
 witchinggadgets_research_text.TERRAFORMFOCUS_END=[WG] Screw the End
 witchinggadgets_research_page.TERRAFORMFOCUS_END.1=Somehow i get the feeling this wont END well, cold Astroids and Enderman.<BR>...<BR>Supply this with Â§5AlienisÂ§0 essentia and live in a cold and lonely place.
+witchinggadgets_research_name.TERRAFORMFOCUS_RIVER=Terrestrial Focus: River
+witchinggadgets_research_text.TERRAFORMFOCUS_RIVER=[WG] Life is a River
+witchinggadgets_research_page.TERRAFORMFOCUS_RIVER.1=Fishing is the thaumaturges most beloved technique. That's why many of them decide to settle near a river.<BR>...<BR>Supply this with Â§bAquaÂ§0 essentia.
+witchinggadgets_research_name.TERRAFORMFOCUS_OCEAN=Terrestrial Focus: Ocean
+witchinggadgets_research_text.TERRAFORMFOCUS_OCEAN=[WG] Living on a Boat
+witchinggadgets_research_page.TERRAFORMFOCUS_OCEAN.1=Why do you want more water as a river has in your house? Emptiness over the water on the ocean is romantic? Upgrade you River focus to Ocean level and enjoy those legendary aqua creepers. <BR>...<BR>Just feed this thing with some Â§bAquaÂ§0 essentia and have fun with your new creeper friends and enjoy your romantic view.
 
 
 
