@@ -308,7 +308,7 @@ public class WGContent
 		GameRegistry.registerItem(ItemMaterial, ItemMaterial.getUnlocalizedName());
 
 		ItemVorpalSword = new ItemVorpalSword().setUnlocalizedName("WG_VorpalSword");
-		GameRegistry.registerItem(ItemVorpalSword,ItemVorpalSword.getUnlocalizedName());
+		// GameRegistry.registerItem(ItemVorpalSword,ItemVorpalSword.getUnlocalizedName());
 		
 		ItemThaumiumShears = new ItemThaumiumShears().setUnlocalizedName("WG_ThaumiumShears");
 		GameRegistry.registerItem(ItemThaumiumShears, ItemThaumiumShears.getUnlocalizedName());
