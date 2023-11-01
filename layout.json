@@ -1,0 +1,13 @@
+{
+  "ideaDirPath": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea",
+  "modulesMap": {
+    "WitchingGadgets": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.iml",
+    "WitchingGadgets:mcLauncher": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.mcLauncher.iml",
+    "WitchingGadgets:patchedMc": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.patchedMc.iml",
+    "WitchingGadgets:test": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.test.iml",
+    "WitchingGadgets:injectedTags": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.injectedTags.iml",
+    "WitchingGadgets:main": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.main.iml",
+    "WitchingGadgets:api": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.api.iml",
+    "WitchingGadgets:ideVirtualMain": "C:/Users/Gaming PC/Documents/GitHub/WitchingGadgets/.idea/modules/WitchingGadgets.ideVirtualMain.iml"
+  }
+}

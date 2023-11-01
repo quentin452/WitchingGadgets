@@ -25,6 +25,11 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import thaumcraft.api.IGoggles;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -41,374 +46,325 @@ import witchinggadgets.common.WGContent;
 import witchinggadgets.common.WGModCompat;
 import witchinggadgets.common.util.Lib;
 import witchinggadgets.common.util.Utilities;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Optional.Interface(iface = "vazkii.botania.api.item.ICosmeticAttachable", modid = "Botania")
-public class ItemCloak extends Item implements ITravellersGear, IActiveAbility, IEventGear, vazkii.botania.api.item.ICosmeticAttachable
-{
-	public static String[] subNames = {"standard","spectral","storage","wolf","raven"};
-	int[] defaultColours = {};
-	IIcon iconRaven;
-	IIcon iconWolf;
+public class ItemCloak extends Item
+        implements ITravellersGear, IActiveAbility, IEventGear, vazkii.botania.api.item.ICosmeticAttachable {
 
-	public ItemCloak()
-	{
-		this.setHasSubtypes(true);
-		this.setCreativeTab(WitchingGadgets.tabWG);
-	}
-	@Override
-	public boolean isItemTool(ItemStack stack)
-	{
-		return stack.stackSize == 1;
-	}
+    public static String[] subNames = { "standard", "spectral", "storage", "wolf", "raven" };
+    int[] defaultColours = {};
+    IIcon iconRaven;
+    IIcon iconWolf;
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister)
-	{
-		this.itemIcon = iconRegister.registerIcon("witchinggadgets:cloak");
-		this.iconRaven = iconRegister.registerIcon("witchinggadgets:cloak_raven");
-		this.iconWolf = iconRegister.registerIcon("witchinggadgets:cloak_wolf");
-	}
-	@Override
-	public IIcon getIconFromDamage(int meta)
-	{
-		if(meta==3)
-			return this.iconWolf;
-		if(meta==4)
-			return this.iconRaven;
-		return this.itemIcon;
-	}
+    public ItemCloak() {
+        this.setHasSubtypes(true);
+        this.setCreativeTab(WitchingGadgets.tabWG);
+    }
 
-	public boolean hasColor(ItemStack stack)
-	{
-		return true;
-	}
+    @Override
+    public boolean isItemTool(ItemStack stack) {
+        return stack.stackSize == 1;
+    }
 
-	@Override
-	public int getColorFromItemStack(ItemStack stack, int pass)
-	{
-		return getColor(stack);
-	}
-	public int getColor(ItemStack stack)
-	{
-		if(stack==null)
-			return 0xffffff;
-		int meta = stack.getItemDamage();
-		if(meta==0)
-		{
-			NBTTagCompound tag = stack.getTagCompound();
-			if(tag == null)
-				return ClientUtilities.colour_CloakBlue;
-			NBTTagCompound tagDisplay = tag.getCompoundTag("display");
-			return tagDisplay == null ? ClientUtilities.colour_CloakBlue : (tagDisplay.hasKey("color") ? tagDisplay.getInteger("color") : ClientUtilities.colour_CloakBlue);
-		}
-		return meta==1?Aspect.DARKNESS.getColor(): meta==2?Aspect.VOID.getColor(): 0xffffff;
-	}
-	public void removeColor(ItemStack stack)
-	{
-		if(stack==null)
-			return;
-		NBTTagCompound tag = stack.getTagCompound();
-		if (tag != null)
-		{
-			NBTTagCompound tagDisplay = tag.getCompoundTag("display");
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        this.itemIcon = iconRegister.registerIcon("witchinggadgets:cloak");
+        this.iconRaven = iconRegister.registerIcon("witchinggadgets:cloak_raven");
+        this.iconWolf = iconRegister.registerIcon("witchinggadgets:cloak_wolf");
+    }
 
-			if (tagDisplay.hasKey("color"))
-			{
-				tagDisplay.removeTag("color");
-			}
-		}
-	}
+    @Override
+    public IIcon getIconFromDamage(int meta) {
+        if (meta == 3) return this.iconWolf;
+        if (meta == 4) return this.iconRaven;
+        return this.itemIcon;
+    }
 
-	public void setColour(ItemStack stack, int colour)
-	{
-		NBTTagCompound nbttagcompound = stack.getTagCompound();
+    public boolean hasColor(ItemStack stack) {
+        return true;
+    }
 
-		if (nbttagcompound == null)
-		{
-			nbttagcompound = new NBTTagCompound();
-			stack.setTagCompound(nbttagcompound);
-		}
+    @Override
+    public int getColorFromItemStack(ItemStack stack, int pass) {
+        return getColor(stack);
+    }
 
-		NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("display");
+    public int getColor(ItemStack stack) {
+        if (stack == null) return 0xffffff;
+        int meta = stack.getItemDamage();
+        if (meta == 0) {
+            NBTTagCompound tag = stack.getTagCompound();
+            if (tag == null) return ClientUtilities.colour_CloakBlue;
+            NBTTagCompound tagDisplay = tag.getCompoundTag("display");
+            return tagDisplay == null ? ClientUtilities.colour_CloakBlue
+                    : (tagDisplay.hasKey("color") ? tagDisplay.getInteger("color") : ClientUtilities.colour_CloakBlue);
+        }
+        return meta == 1 ? Aspect.DARKNESS.getColor() : meta == 2 ? Aspect.VOID.getColor() : 0xffffff;
+    }
 
-		if (!nbttagcompound.hasKey("display"))
-		{
-			nbttagcompound.setTag("display", nbttagcompound1);
-		}
+    public void removeColor(ItemStack stack) {
+        if (stack == null) return;
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag != null) {
+            NBTTagCompound tagDisplay = tag.getCompoundTag("display");
 
-		nbttagcompound1.setInteger("color", colour);
-	}
+            if (tagDisplay.hasKey("color")) {
+                tagDisplay.removeTag("color");
+            }
+        }
+    }
 
-	@Override
-	public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String layer)
-	{
-		if(itemstack.getItemDamage()<subNames.length)
-			if(subNames[itemstack.getItemDamage()].equals("wolf"))
-				return "witchinggadgets:textures/models/cloakWolf.png";
-			else if(subNames[itemstack.getItemDamage()].equals("raven"))
-				return "witchinggadgets:textures/models/cloakRaven.png";
-		return "witchinggadgets:textures/models/cloak.png";
-	}
+    public void setColour(ItemStack stack, int colour) {
+        NBTTagCompound nbttagcompound = stack.getTagCompound();
 
-	@Override
-	public int getMaxDamage(ItemStack stack)
-	{
-		return 0;
-	}
+        if (nbttagcompound == null) {
+            nbttagcompound = new NBTTagCompound();
+            stack.setTagCompound(nbttagcompound);
+        }
 
-	@SideOnly(Side.CLIENT)
-	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot)
-	{
-		return new ModelCloak(getColor(itemStack));
-	}
+        NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("display");
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack)
-	{
-		return getUnlocalizedName() + "." + subNames[stack.getItemDamage()];
-	}
+        if (!nbttagcompound.hasKey("display")) {
+            nbttagcompound.setTag("display", nbttagcompound1);
+        }
 
-	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List itemList)
-	{
-		for(int i=0; i<subNames.length; i++)
-			if(i!=4 || WGModCompat.loaded_Twilight)
-				itemList.add(new ItemStack(item,1,i));
-	}
+        nbttagcompound1.setInteger("color", colour);
+    }
 
-	public ItemStack[] getStoredItems(ItemStack item)	
-	{
-		ItemStack[] stackList = new ItemStack[27];
+    @Override
+    public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String layer) {
+        if (itemstack.getItemDamage() < subNames.length) if (subNames[itemstack.getItemDamage()].equals("wolf"))
+            return "witchinggadgets:textures/models/cloakWolf.png";
+        else if (subNames[itemstack.getItemDamage()].equals("raven"))
+            return "witchinggadgets:textures/models/cloakRaven.png";
+        return "witchinggadgets:textures/models/cloak.png";
+    }
 
-		if (item.hasTagCompound()) {
-			NBTTagList inv = item.getTagCompound().getTagList("InternalInventory",10);
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return 0;
+    }
 
-			for (int i = 0; i < inv.tagCount(); i++)
-			{
-				NBTTagCompound tag = inv.getCompoundTagAt(i);
-				int slot = tag.getByte("Slot") & 0xFF;
+    @SideOnly(Side.CLIENT)
+    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot) {
+        return new ModelCloak(getColor(itemStack));
+    }
 
-				if ((slot >= 0) && (slot < stackList.length))
-				{
-					stackList[slot] = ItemStack.loadItemStackFromNBT(tag);
-				}
-			}
-		}
-		return stackList;
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        return getUnlocalizedName() + "." + subNames[stack.getItemDamage()];
+    }
 
-	public void setStoredItems(ItemStack item, ItemStack[] stackList)
-	{
-		NBTTagList inv = new NBTTagList();
+    @Override
+    public void getSubItems(Item item, CreativeTabs tab, List itemList) {
+        for (int i = 0; i < subNames.length; i++)
+            if (i != 4 || WGModCompat.loaded_Twilight) itemList.add(new ItemStack(item, 1, i));
+    }
 
-		for (int i = 0; i < stackList.length; i++)
-		{
-			if (stackList[i] != null)
-			{
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte)i);
-				stackList[i].writeToNBT(tag);
-				inv.appendTag(tag);
-			}
-		}
-		if(!item.hasTagCompound())
-		{
-			item.setTagCompound(new NBTTagCompound());
-		}
-		item.getTagCompound().setTag("InternalInventory",inv);
-	}
+    public ItemStack[] getStoredItems(ItemStack item) {
+        ItemStack[] stackList = new ItemStack[27];
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer par2EntityPlayer, List list, boolean par4)
-	{
-		if(stack.hasTagCompound() && stack.getTagCompound().getBoolean("noGlide"))
-			list.add(StatCollector.translateToLocal(Lib.DESCRIPTION+"noGlide"));
-		list.add(StatCollector.translateToLocalFormatted(Lib.DESCRIPTION+"gearSlot.tg."+getSlot(stack)));
+        if (item.hasTagCompound()) {
+            NBTTagList inv = item.getTagCompound().getTagList("InternalInventory", 10);
 
-		if(Loader.isModLoaded("Botania"))
-		{
-			ItemStack cosmetic = getCosmeticItem(stack);
-			if(cosmetic != null)
-				list.add( String.format(StatCollector.translateToLocal("botaniamisc.hasCosmetic"), cosmetic.getDisplayName()).replaceAll("&","\u00a7") );
-		}
-	}
+            for (int i = 0; i < inv.tagCount(); i++) {
+                NBTTagCompound tag = inv.getCompoundTagAt(i);
+                int slot = tag.getByte("Slot") & 0xFF;
 
-	@Override
-	public int getSlot(ItemStack stack)
-	{
-		return 0;
-	}
+                if ((slot >= 0) && (slot < stackList.length)) {
+                    stackList[slot] = ItemStack.loadItemStackFromNBT(tag);
+                }
+            }
+        }
+        return stackList;
+    }
 
-	public void onItemTicked(EntityPlayer player, ItemStack stack)
-	{
-		if(player.ticksExisted<1)
-		{
-			onItemUnequipped(player,stack);
-			onItemEquipped(player,stack);
-		}
+    public void setStoredItems(ItemStack item, ItemStack[] stackList) {
+        NBTTagList inv = new NBTTagList();
 
-		if(stack.getItemDamage()<subNames.length)
-		{
-			if(subNames[stack.getItemDamage()].equals("spectral") && !player.worldObj.isRemote && stack.hasTagCompound() && stack.getTagCompound().getBoolean("isSpectral"))
-				if(player.ticksExisted%100==0)
-					if(!Utilities.consumeVisFromInventoryWithoutDiscount(player, new AspectList().add(Aspect.AIR,1)))
-						stack.getTagCompound().setBoolean("isSpectral",false);
-			if(subNames[stack.getItemDamage()].equals("raven"))
-			{
-				if(!player.onGround && !player.isOnLadder())
-				{
-					if(player.capabilities.isFlying || Hover.getHover(player.getEntityId()))
-					{
-						if(player.moveForward>0)
-							player.moveFlying(0,1, .05f);
-						player.motionY *= 1.125;
-					}
-					else if(player.motionY<0 && (!stack.hasTagCompound()||!stack.getTagCompound().getBoolean("noGlide")))
-					{
-						float mod = player.isSneaking()?.1f:.05f;
-						player.motionY *= player.isSneaking()?.75:.5;
-						double x = Math.cos(Math.toRadians(player.rotationYawHead + 90)) * mod;
-						double z = Math.sin(Math.toRadians(player.rotationYawHead + 90)) * mod;
-						player.motionX += x;
-						player.motionZ += z;
-					}
-					player.fallDistance = 0f;
-				}
+        for (int i = 0; i < stackList.length; i++) {
+            if (stackList[i] != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setByte("Slot", (byte) i);
+                stackList[i].writeToNBT(tag);
+                inv.appendTag(tag);
+            }
+        }
+        if (!item.hasTagCompound()) {
+            item.setTagCompound(new NBTTagCompound());
+        }
+        item.getTagCompound().setTag("InternalInventory", inv);
+    }
 
-			}
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer par2EntityPlayer, List list, boolean par4) {
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("noGlide"))
+            list.add(StatCollector.translateToLocal(Lib.DESCRIPTION + "noGlide"));
+        list.add(StatCollector.translateToLocalFormatted(Lib.DESCRIPTION + "gearSlot.tg." + getSlot(stack)));
 
-			if(subNames[stack.getItemDamage()].equals("wolf") && stack.hasTagCompound() && stack.getTagCompound().hasKey("wolfPotion"))
-			{
-				int amp = stack.getTagCompound().getInteger("wolfPotion");
-				player.addPotionEffect(new PotionEffect(Potion.damageBoost.id, 60, amp));
-				player.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, amp));
-				player.addPotionEffect(new PotionEffect(Potion.resistance.id, 60, amp));
-				stack.getTagCompound().removeTag("wolfPotion");
-				if(stack.getTagCompound().hasNoTags())
-					stack.setTagCompound(null);
-			}
-		}
-	}
-	public void onItemEquipped(EntityPlayer player, ItemStack stack)
-	{
-	}
-	public void onItemUnequipped(EntityPlayer player, ItemStack stack)
-	{
-		if(stack.hasTagCompound() && stack.getTagCompound().getBoolean("isSpectral"))
-			stack.getTagCompound().setBoolean("isSpectral",false);
-	}
+        if (Loader.isModLoaded("Botania")) {
+            ItemStack cosmetic = getCosmeticItem(stack);
+            if (cosmetic != null) list.add(
+                    String.format(StatCollector.translateToLocal("botaniamisc.hasCosmetic"), cosmetic.getDisplayName())
+                            .replaceAll("&", "\u00a7"));
+        }
+    }
 
-	@Override
-	public void onTravelGearTick(EntityPlayer player, ItemStack stack)
-	{
-		onItemTicked(player,stack);
-	}
-	@Override
-	public void onTravelGearEquip(EntityPlayer player, ItemStack stack)
-	{
-		onItemEquipped(player,stack);
-	}
-	@Override
-	public void onTravelGearUnequip(EntityPlayer player, ItemStack stack)
-	{
-		onItemUnequipped(player,stack);
-	}
+    @Override
+    public int getSlot(ItemStack stack) {
+        return 0;
+    }
 
+    public void onItemTicked(EntityPlayer player, ItemStack stack) {
+        if (player.ticksExisted < 1) {
+            onItemUnequipped(player, stack);
+            onItemEquipped(player, stack);
+        }
 
+        if (stack.getItemDamage() < subNames.length) {
+            if (subNames[stack.getItemDamage()].equals("spectral") && !player.worldObj.isRemote
+                    && stack.hasTagCompound()
+                    && stack.getTagCompound().getBoolean("isSpectral"))
+                if (player.ticksExisted % 100 == 0)
+                    if (!Utilities.consumeVisFromInventoryWithoutDiscount(player, new AspectList().add(Aspect.AIR, 1)))
+                        stack.getTagCompound().setBoolean("isSpectral", false);
+            if (subNames[stack.getItemDamage()].equals("raven")) {
+                if (!player.onGround && !player.isOnLadder()) {
+                    if (player.capabilities.isFlying || Hover.getHover(player.getEntityId())) {
+                        if (player.moveForward > 0) player.moveFlying(0, 1, .05f);
+                        player.motionY *= 1.125;
+                    } else if (player.motionY < 0
+                            && (!stack.hasTagCompound() || !stack.getTagCompound().getBoolean("noGlide"))) {
+                                float mod = player.isSneaking() ? .1f : .05f;
+                                player.motionY *= player.isSneaking() ? .75 : .5;
+                                double x = Math.cos(Math.toRadians(player.rotationYawHead + 90)) * mod;
+                                double z = Math.sin(Math.toRadians(player.rotationYawHead + 90)) * mod;
+                                player.motionX += x;
+                                player.motionZ += z;
+                            }
+                    player.fallDistance = 0f;
+                }
 
-	@Override
-	public boolean canActivate(EntityPlayer player, ItemStack stack, boolean isInHand)
-	{
-		return !isInHand && stack.getItemDamage()!=0 && stack.getItemDamage()!=3;
-	}
+            }
 
-	@Override
-	public void activate(EntityPlayer player, ItemStack stack)
-	{
-		if(stack.getItemDamage()<subNames.length)
-			if(subNames[stack.getItemDamage()].equals("storage") && !player.worldObj.isRemote)
-				player.openGui(WitchingGadgets.instance, this.equals(WGContent.ItemKama)?5:4, player.worldObj, MathHelper.floor_double(player.posX), MathHelper.floor_double(player.posY), MathHelper.floor_double(player.posZ));
-			else if(subNames[stack.getItemDamage()].equals("raven") && !player.worldObj.isRemote)
-			{
-				if(!stack.hasTagCompound())
-					stack.setTagCompound(new NBTTagCompound());
-				stack.getTagCompound().setBoolean("noGlide", !stack.getTagCompound().getBoolean("noGlide"));
-			}
-			else if(subNames[stack.getItemDamage()].equals("spectral") && !player.worldObj.isRemote && Utilities.consumeVisFromInventoryWithoutDiscount(player, new AspectList().add(Aspect.AIR,1)))
-			{
-				if(!stack.hasTagCompound())
-					stack.setTagCompound(new NBTTagCompound());
-				stack.getTagCompound().setBoolean("isSpectral", !stack.getTagCompound().getBoolean("isSpectral"));
-				if(stack.getTagCompound().getBoolean("isSpectral"))
-				{
-					for(EntityCreature e : (List<EntityCreature>)player.worldObj.getEntitiesWithinAABB(EntityCreature.class, AxisAlignedBB.getBoundingBox(player.posX-16,player.posY-16,player.posZ-16, player.posX+16,player.posY+16,player.posZ+16)))
-						if(e!=null && !(e instanceof IBossDisplayData) && player.equals(e.getAttackTarget()))
-							Utilities.setAttackTarget(e, null);
-				}
-			}
-	}
+            if (subNames[stack.getItemDamage()].equals("wolf") && stack.hasTagCompound()
+                    && stack.getTagCompound().hasKey("wolfPotion")) {
+                int amp = stack.getTagCompound().getInteger("wolfPotion");
+                player.addPotionEffect(new PotionEffect(Potion.damageBoost.id, 60, amp));
+                player.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, amp));
+                player.addPotionEffect(new PotionEffect(Potion.resistance.id, 60, amp));
+                stack.getTagCompound().removeTag("wolfPotion");
+                if (stack.getTagCompound().hasNoTags()) stack.setTagCompound(null);
+            }
+        }
+    }
 
-	@Override
-	public void onUserDamaged(LivingHurtEvent event, ItemStack stack)
-	{
-		if(!stack.equals(event.entityLiving.getEquipmentInSlot(0)) && stack.getItemDamage()==3)
-		{
-			int amp = 1;
-			if(event.ammount>=8)
-				amp++;
-			if(event.ammount>=12)
-				amp++;
-			if(!stack.hasTagCompound())
-				stack.setTagCompound(new NBTTagCompound());
-			stack.getTagCompound().setInteger("wolfPotion", amp);
-		}
-	}
+    public void onItemEquipped(EntityPlayer player, ItemStack stack) {}
 
-	@Override
-	public void onUserAttacking(AttackEntityEvent event, ItemStack stack)
-	{
-	}
+    public void onItemUnequipped(EntityPlayer player, ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("isSpectral"))
+            stack.getTagCompound().setBoolean("isSpectral", false);
+    }
 
-	@Override
-	public void onUserJump(LivingJumpEvent event, ItemStack stack)
-	{
-	}
+    @Override
+    public void onTravelGearTick(EntityPlayer player, ItemStack stack) {
+        onItemTicked(player, stack);
+    }
 
-	@Override
-	public void onUserFall(LivingFallEvent event, ItemStack stack)
-	{
-	}
+    @Override
+    public void onTravelGearEquip(EntityPlayer player, ItemStack stack) {
+        onItemEquipped(player, stack);
+    }
 
-	@Override
-	public void onUserTargeted(LivingSetAttackTargetEvent event, ItemStack stack)
-	{
-		if(stack.hasTagCompound() && stack.getTagCompound().getBoolean("isSpectral") && event.entityLiving instanceof EntityCreature)
-		{
-			boolean goggles = event.entityLiving.getEquipmentInSlot(4)!=null && (event.entityLiving.getEquipmentInSlot(4).getItem() instanceof IRevealer || event.entityLiving.getEquipmentInSlot(4).getItem() instanceof IGoggles);
-			boolean special = event.entityLiving instanceof IEldritchMob || event.entityLiving instanceof IBossDisplayData;
-			if(!goggles && !special)
-				Utilities.setAttackTarget((EntityCreature)event.entityLiving, null);
-		}
-	}
+    @Override
+    public void onTravelGearUnequip(EntityPlayer player, ItemStack stack) {
+        onItemUnequipped(player, stack);
+    }
 
-	@Optional.Method(modid = "Botania")
-	public ItemStack getCosmeticItem(ItemStack stack)
-	{
-		if(!stack.hasTagCompound())
-			return null;
-		ItemStack cosmetic = ItemStack.loadItemStackFromNBT(stack.getTagCompound().getCompoundTag("botaniaCosmeticOverride"));
-		return cosmetic;
-	}
-	@Optional.Method(modid = "Botania")
-	public void setCosmeticItem(ItemStack stack, ItemStack cosmetic)
-	{
-		if(!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		NBTTagCompound cosTag = cosmetic.writeToNBT(new NBTTagCompound());
-		stack.getTagCompound().setTag("botaniaCosmeticOverride",cosTag);
-	}
+    @Override
+    public boolean canActivate(EntityPlayer player, ItemStack stack, boolean isInHand) {
+        return !isInHand && stack.getItemDamage() != 0 && stack.getItemDamage() != 3;
+    }
+
+    @Override
+    public void activate(EntityPlayer player, ItemStack stack) {
+        if (stack.getItemDamage() < subNames.length)
+            if (subNames[stack.getItemDamage()].equals("storage") && !player.worldObj.isRemote) player.openGui(
+                    WitchingGadgets.instance,
+                    this.equals(WGContent.ItemKama) ? 5 : 4,
+                    player.worldObj,
+                    MathHelper.floor_double(player.posX),
+                    MathHelper.floor_double(player.posY),
+                    MathHelper.floor_double(player.posZ));
+            else if (subNames[stack.getItemDamage()].equals("raven") && !player.worldObj.isRemote) {
+                if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+                stack.getTagCompound().setBoolean("noGlide", !stack.getTagCompound().getBoolean("noGlide"));
+            } else if (subNames[stack.getItemDamage()].equals("spectral") && !player.worldObj.isRemote
+                    && Utilities.consumeVisFromInventoryWithoutDiscount(player, new AspectList().add(Aspect.AIR, 1))) {
+                        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+                        stack.getTagCompound()
+                                .setBoolean("isSpectral", !stack.getTagCompound().getBoolean("isSpectral"));
+                        if (stack.getTagCompound().getBoolean("isSpectral")) {
+                            for (EntityCreature e : (List<EntityCreature>) player.worldObj.getEntitiesWithinAABB(
+                                    EntityCreature.class,
+                                    AxisAlignedBB.getBoundingBox(
+                                            player.posX - 16,
+                                            player.posY - 16,
+                                            player.posZ - 16,
+                                            player.posX + 16,
+                                            player.posY + 16,
+                                            player.posZ + 16)))
+                                if (e != null && !(e instanceof IBossDisplayData) && player.equals(e.getAttackTarget()))
+                                    Utilities.setAttackTarget(e, null);
+                        }
+                    }
+    }
+
+    @Override
+    public void onUserDamaged(LivingHurtEvent event, ItemStack stack) {
+        if (!stack.equals(event.entityLiving.getEquipmentInSlot(0)) && stack.getItemDamage() == 3) {
+            int amp = 1;
+            if (event.ammount >= 8) amp++;
+            if (event.ammount >= 12) amp++;
+            if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+            stack.getTagCompound().setInteger("wolfPotion", amp);
+        }
+    }
+
+    @Override
+    public void onUserAttacking(AttackEntityEvent event, ItemStack stack) {}
+
+    @Override
+    public void onUserJump(LivingJumpEvent event, ItemStack stack) {}
+
+    @Override
+    public void onUserFall(LivingFallEvent event, ItemStack stack) {}
+
+    @Override
+    public void onUserTargeted(LivingSetAttackTargetEvent event, ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("isSpectral")
+                && event.entityLiving instanceof EntityCreature) {
+            boolean goggles = event.entityLiving.getEquipmentInSlot(4) != null
+                    && (event.entityLiving.getEquipmentInSlot(4).getItem() instanceof IRevealer
+                            || event.entityLiving.getEquipmentInSlot(4).getItem() instanceof IGoggles);
+            boolean special = event.entityLiving instanceof IEldritchMob
+                    || event.entityLiving instanceof IBossDisplayData;
+            if (!goggles && !special) Utilities.setAttackTarget((EntityCreature) event.entityLiving, null);
+        }
+    }
+
+    @Optional.Method(modid = "Botania")
+    public ItemStack getCosmeticItem(ItemStack stack) {
+        if (!stack.hasTagCompound()) return null;
+        ItemStack cosmetic = ItemStack
+                .loadItemStackFromNBT(stack.getTagCompound().getCompoundTag("botaniaCosmeticOverride"));
+        return cosmetic;
+    }
+
+    @Optional.Method(modid = "Botania")
+    public void setCosmeticItem(ItemStack stack, ItemStack cosmetic) {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound cosTag = cosmetic.writeToNBT(new NBTTagCompound());
+        stack.getTagCompound().setTag("botaniaCosmeticOverride", cosTag);
+    }
 }

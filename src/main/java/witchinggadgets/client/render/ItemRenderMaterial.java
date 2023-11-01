@@ -19,8 +19,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.research.ScanResult;
 import thaumcraft.client.lib.UtilsFX;
@@ -30,6 +32,7 @@ import witchinggadgets.client.ClientUtilities;
 import witchinggadgets.common.util.Utilities;
 
 public class ItemRenderMaterial implements IItemRenderer {
+
     @Override
     public boolean handleRenderType(ItemStack stack, ItemRenderType type) {
         int meta = stack.getItemDamage();
@@ -69,7 +72,8 @@ public class ItemRenderMaterial implements IItemRenderer {
         int aspectColour = 0xffffff;
         if (stack.getTagCompound() != null) {
             ScanResult scan = Utilities.readScanResultFromNBT(
-                    stack.getTagCompound().getCompoundTag("scanResult"), entityclientplayermp.worldObj);
+                    stack.getTagCompound().getCompoundTag("scanResult"),
+                    entityclientplayermp.worldObj);
             AspectList scanAspects = new AspectList();
             if (scan != null) {
                 switch (scan.type) {
@@ -92,9 +96,8 @@ public class ItemRenderMaterial implements IItemRenderer {
                         }
                         break;
                     case 3:
-                        if (scan.phenomena.startsWith("NODE"))
-                            scanAspects = Utilities.generateNodeAspects(
-                                    entityclientplayermp.worldObj, scan.phenomena.replace("NODE", ""));
+                        if (scan.phenomena.startsWith("NODE")) scanAspects = Utilities
+                                .generateNodeAspects(entityclientplayermp.worldObj, scan.phenomena.replace("NODE", ""));
                         break;
                 }
             }
@@ -109,8 +112,7 @@ public class ItemRenderMaterial implements IItemRenderer {
             float timer = UtilsFX.getTimer(mc).renderPartialTicks;
             float f1 = UtilsFX.getPrevEquippedProgress(mc.entityRenderer.itemRenderer)
                     + (UtilsFX.getEquippedProgress(mc.entityRenderer.itemRenderer)
-                                    - UtilsFX.getPrevEquippedProgress(mc.entityRenderer.itemRenderer))
-                            * timer;
+                            - UtilsFX.getPrevEquippedProgress(mc.entityRenderer.itemRenderer)) * timer;
             float f2 = entityclientplayermp.prevRotationPitch
                     + (entityclientplayermp.rotationPitch - entityclientplayermp.prevRotationPitch) * timer;
 
@@ -146,7 +148,9 @@ public class ItemRenderMaterial implements IItemRenderer {
             f8 = MathHelper.sin(f7 * (float) Math.PI);
             f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
             GL11.glTranslatef(
-                    -f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
+                    -f6 * 0.4F,
+                    MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F,
+                    -f8 * 0.2F);
             f7 = 1.0F - f2 / 45.0F + 0.1F;
 
             if (f7 < 0.0F) {
@@ -162,8 +166,9 @@ public class ItemRenderMaterial implements IItemRenderer {
             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(f7 * -85.0F, 0.0F, 0.0F, 1.0F);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            ClientUtilities.bindTexture(entityclientplayermp.getLocationSkin().getResourceDomain() + ":"
-                    + entityclientplayermp.getLocationSkin().getResourcePath());
+            ClientUtilities.bindTexture(
+                    entityclientplayermp.getLocationSkin().getResourceDomain() + ":"
+                            + entityclientplayermp.getLocationSkin().getResourcePath());
 
             for (k = 0; k < 2; ++k) {
                 int l = k * 2 - 1;
@@ -199,26 +204,23 @@ public class ItemRenderMaterial implements IItemRenderer {
             Tessellator tessellator = Tessellator.instance;
             GL11.glNormal3f(0.0F, 0.0F, -1.0F);
 
-            //		int timerSteps = entityclientplayermp.ticksExisted % 68;
-            //		double step = 1.0/9.0;
-            //		int frame = timerSteps<60 ? 0 : timerSteps-59;
+            // int timerSteps = entityclientplayermp.ticksExisted % 68;
+            // double step = 1.0/9.0;
+            // int frame = timerSteps<60 ? 0 : timerSteps-59;
 
             GL11.glEnable(3042);
             GL11.glBlendFunc(770, 771);
             tessellator.startDrawingQuads();
             byte b0 = 7;
-            //		tessellator.addVertexWithUV(0   - b0, 128 + b0, 0.0D, 0.0D, frame*step);
-            //		tessellator.addVertexWithUV(128 + b0, 128 + b0, 0.0D, 1.0D, frame*step);
-            //		tessellator.addVertexWithUV(128 + b0, 0   - b0, 0.0D, 1.0D, (frame-1)*step);
-            //		tessellator.addVertexWithUV(0   - b0, 0   - b0, 0.0D, 0.0D, (frame-1)*step);
-            //		tessellator.draw();
+            // tessellator.addVertexWithUV(0 - b0, 128 + b0, 0.0D, 0.0D, frame*step);
+            // tessellator.addVertexWithUV(128 + b0, 128 + b0, 0.0D, 1.0D, frame*step);
+            // tessellator.addVertexWithUV(128 + b0, 0 - b0, 0.0D, 1.0D, (frame-1)*step);
+            // tessellator.addVertexWithUV(0 - b0, 0 - b0, 0.0D, 0.0D, (frame-1)*step);
+            // tessellator.draw();
             IIcon ic = stack.getIconIndex();
             ClientUtilities.bindTexture(
-                    mc.getTextureManager()
-                                    .getResourceLocation(stack.getItemSpriteNumber())
-                                    .getResourceDomain() + ":"
-                            + mc.getTextureManager()
-                                    .getResourceLocation(stack.getItemSpriteNumber())
+                    mc.getTextureManager().getResourceLocation(stack.getItemSpriteNumber()).getResourceDomain() + ":"
+                            + mc.getTextureManager().getResourceLocation(stack.getItemSpriteNumber())
                                     .getResourcePath());
             tessellator.addVertexWithUV(0 - b0, 128 + b0, 0.0D, ic.getMinU(), ic.getMaxV());
             tessellator.addVertexWithUV(128 + b0, 128 + b0, 0.0D, ic.getMaxU(), ic.getMaxV());
@@ -234,7 +236,14 @@ public class ItemRenderMaterial implements IItemRenderer {
             GL11.glRotatef(90, 0, 1, 0);
             GL11.glTranslatef(-.5f, -.5f, 0);
             ItemRenderer.renderItemIn2D(
-                    Tessellator.instance, f1, f2, f, f3, ic.getIconWidth(), ic.getIconHeight(), 0.0625F);
+                    Tessellator.instance,
+                    f1,
+                    f2,
+                    f,
+                    f3,
+                    ic.getIconWidth(),
+                    ic.getIconHeight(),
+                    0.0625F);
         }
 
         if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
@@ -245,11 +254,8 @@ public class ItemRenderMaterial implements IItemRenderer {
                     (aspectColour >> 32 & 255) / 255f);
             IIcon ic = stack.getItem().getIconFromDamageForRenderPass(stack.getItemDamage(), 99);
             ClientUtilities.bindTexture(
-                    mc.getTextureManager()
-                                    .getResourceLocation(stack.getItemSpriteNumber())
-                                    .getResourceDomain() + ":"
-                            + mc.getTextureManager()
-                                    .getResourceLocation(stack.getItemSpriteNumber())
+                    mc.getTextureManager().getResourceLocation(stack.getItemSpriteNumber()).getResourceDomain() + ":"
+                            + mc.getTextureManager().getResourceLocation(stack.getItemSpriteNumber())
                                     .getResourcePath());
 
             byte b0 = 7;

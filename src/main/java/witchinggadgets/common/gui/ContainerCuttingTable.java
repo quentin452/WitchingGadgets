@@ -5,11 +5,13 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.config.ConfigItems;
 import witchinggadgets.common.blocks.tiles.TileEntityCuttingTable;
 
 public class ContainerCuttingTable extends Container {
+
     protected final TileEntityCuttingTable tileEntity;
     private int slotCount;
 
@@ -23,6 +25,7 @@ public class ContainerCuttingTable extends Container {
 
         for (int i = 0; i < 3; i++) {
             this.addSlotToContainer(new Slot(tileEntity, 1 + i, 60 + 20 * i, 56) {
+
                 @Override
                 public boolean isItemValid(ItemStack stack) {
                     if (stack == null) return true;
@@ -39,6 +42,7 @@ public class ContainerCuttingTable extends Container {
             });
         }
         this.addSlotToContainer(new SlotOutput(tileEntity, 4, 118, 24) {
+
             @Override
             public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
                 this.inventory.decrStackSize(0, 1);

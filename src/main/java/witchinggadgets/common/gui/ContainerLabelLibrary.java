@@ -5,12 +5,14 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.common.config.ConfigItems;
 import witchinggadgets.common.blocks.tiles.TileEntityLabelLibrary;
 
 public class ContainerLabelLibrary extends Container {
+
     private static final int LABEL_INPUT_SLOT = 0;
     private static final int LABEL_OUTPUT_SLOT = 1;
     private static final int SLOT_COUNT = 2;
@@ -24,12 +26,14 @@ public class ContainerLabelLibrary extends Container {
         // and the x-y coordinates it resides on-screen
 
         this.addSlotToContainer(new Slot(tileEntity, LABEL_INPUT_SLOT, 8, 8) {
+
             @Override
             public boolean isItemValid(ItemStack stack) {
                 return isLabel(stack);
             }
         });
         this.addSlotToContainer(new SlotOutput(tileEntity, LABEL_OUTPUT_SLOT, 8, 51) {
+
             @Override
             public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
                 this.inventory.decrStackSize(LABEL_INPUT_SLOT, 1);
@@ -49,9 +53,8 @@ public class ContainerLabelLibrary extends Container {
     }
 
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 
         for (int i = 0; i < 9; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
     }
@@ -85,8 +88,8 @@ public class ContainerLabelLibrary extends Container {
                 labelSlot.putStack(clickedItem);
                 clickedSlot.decrStackSize(clickedItem.stackSize);
             } else {
-                final int amountToTransfer =
-                        Math.min(labels.getMaxStackSize() - labels.stackSize, clickedItem.stackSize);
+                final int amountToTransfer = Math
+                        .min(labels.getMaxStackSize() - labels.stackSize, clickedItem.stackSize);
                 if (amountToTransfer == 0) {
                     return;
                 }
@@ -134,8 +137,8 @@ public class ContainerLabelLibrary extends Container {
                     labelSlot.putStack(heldStack);
                     heldStack = null;
                 } else {
-                    final int amountToTransfer =
-                            Math.min(labels.getMaxStackSize() - labels.stackSize, heldStack.stackSize);
+                    final int amountToTransfer = Math
+                            .min(labels.getMaxStackSize() - labels.stackSize, heldStack.stackSize);
                     labels.stackSize += amountToTransfer;
                     labelSlot.putStack(labels);
                     heldStack.stackSize -= amountToTransfer;
