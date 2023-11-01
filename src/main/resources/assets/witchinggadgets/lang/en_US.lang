@@ -582,7 +582,8 @@ witchinggadgets_research_text.TERRAFORMFOCUS_RIVER=[WG] Life is a River
 witchinggadgets_research_page.TERRAFORMFOCUS_RIVER.1=Fishing is the thaumaturges most beloved technique. That's why many of them decide to settle near a river.<BR>...<BR>Supply this with §bAqua§0 essentia.
 witchinggadgets_research_name.TERRAFORMFOCUS_OCEAN=Terrestrial Focus: Ocean
 witchinggadgets_research_text.TERRAFORMFOCUS_OCEAN=[WG] Living on a Boat
-witchinggadgets_research_page.TERRAFORMFOCUS_OCEAN.1=Why do you want more water as a river has in your house? Emptiness over the water on the ocean is romantic? Upgrade you River focus to Ocean level. <BR>...<BR>Just feed this thing with some §bAqua§0 essentia and enjoy your romantic view.witchinggadgets_research_name.TERRAFORMFOCUS_MAGIC=Terrestrial Focus: Magical Forest
+witchinggadgets_research_page.TERRAFORMFOCUS_OCEAN.1=Why do you want more water as a river has in your house? Emptiness over the water on the ocean is romantic? Upgrade you River focus to Ocean level. <BR>...<BR>Just feed this thing with some §bAqua§0 essentia and enjoy your romantic view.
+witchinggadgets_research_name.TERRAFORMFOCUS_MAGIC=Terrestrial Focus: Magical Forest
 witchinggadgets_research_text.TERRAFORMFOCUS_MAGIC=[WG] It's a kind of magic
 witchinggadgets_research_page.TERRAFORMFOCUS_MAGIC.1=The world is full of magic, but you've never found much of it at some place, so it's time to create a whole magical biome.<BR>...<BR>Supply this with §cSano§0 feel the magic around you.
 
