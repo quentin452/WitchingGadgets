@@ -42,7 +42,7 @@ import witchinggadgets.common.world.VillageComponentPhotoshop;
         modid = WitchingGadgets.MODID,
         name = WitchingGadgets.MODNAME,
         version = WitchingGadgets.VERSION,
-        dependencies = "required-after:Thaumcraft;required-after:ForbiddenMagic;required-after:TravellersGear@[1.16.4,);after:TwilightForest;after:Mystcraft;after:TConstruct;after:MagicBees;after:ForgeMultipart")
+        dependencies = "required-after:Thaumcraft;required-after:ForbiddenMagic;required-after:TravellersGear;after:TwilightForest;after:Mystcraft;after:TConstruct;after:MagicBees;after:ForgeMultipart")
 public class WitchingGadgets {
 
     public static final String MODID = "WitchingGadgets";
